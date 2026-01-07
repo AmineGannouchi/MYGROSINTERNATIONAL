@@ -42,7 +42,8 @@ export default function Checkout() {
   const [deliveryAddress, setDeliveryAddress] = useState({
     address: '',
     city: '',
-    postalCode: ''
+    postalCode: '',
+    coordinates: ''
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -63,6 +64,10 @@ export default function Checkout() {
 
     setSubmitting(true);
     try {
+      const coords = deliveryAddress.coordinates.split(',').map(c => parseFloat(c.trim()));
+      const lat = coords[0] || null;
+      const lng = coords[1] || null;
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -77,6 +82,8 @@ export default function Checkout() {
           delivery_address: deliveryAddress.address,
           delivery_city: deliveryAddress.city,
           delivery_postal_code: deliveryAddress.postalCode,
+          delivery_latitude: lat,
+          delivery_longitude: lng,
           delivery_time_slot: selectedTimeSlot || null,
         })
         .select()
@@ -276,6 +283,22 @@ export default function Checkout() {
                       placeholder="69000"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Coordonnées GPS (latitude, longitude)
+                  </label>
+                  <input
+                    type="text"
+                    value={deliveryAddress.coordinates}
+                    onChange={(e) => setDeliveryAddress({ ...deliveryAddress, coordinates: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="45.6843, 4.9095"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Format: latitude, longitude (trouvez sur Google Maps)
+                  </p>
                 </div>
               </div>
             </div>

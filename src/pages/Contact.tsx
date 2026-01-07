@@ -1,6 +1,49 @@
+import { useState } from 'react';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function Contact() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const { error: insertError } = await supabase.from('contact_messages').insert({
+        name,
+        email,
+        phone: phone || null,
+        subject,
+        message,
+      });
+
+      if (insertError) throw insertError;
+
+      setSuccess(true);
+      setName('');
+      setEmail('');
+      setPhone('');
+      setSubject('');
+      setMessage('');
+
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err) {
+      setError('Erreur lors de l\'envoi du message');
+      console.error(err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <section className="bg-gradient-to-r from-green-600 to-green-700 text-white py-16">
@@ -87,7 +130,19 @@ export default function Contact() {
               Envoyez-nous un message
             </h2>
 
-            <form className="space-y-4">
+            {success && (
+              <div className="mb-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg">
+                Message envoyé avec succès ! Nous vous répondrons rapidement.
+              </div>
+            )}
+
+            {error && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   Nom complet
@@ -95,6 +150,8 @@ export default function Contact() {
                 <input
                   id="name"
                   type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
@@ -107,6 +164,35 @@ export default function Contact() {
                 <input
                   id="email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                  Téléphone (optionnel)
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                  Sujet
+                </label>
+                <input
+                  id="subject"
+                  type="text"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
@@ -119,6 +205,8 @@ export default function Contact() {
                 <textarea
                   id="message"
                   rows={5}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 ></textarea>
@@ -126,9 +214,10 @@ export default function Contact() {
 
               <button
                 type="submit"
-                className="w-full bg-green-600 text-white py-3 px-6 rounded-md hover:bg-green-700 transition-colors font-semibold"
+                disabled={submitting}
+                className="w-full bg-green-600 text-white py-3 px-6 rounded-md hover:bg-green-700 transition-colors font-semibold disabled:opacity-50"
               >
-                Envoyer le message
+                {submitting ? 'Envoi...' : 'Envoyer le message'}
               </button>
             </form>
           </div>

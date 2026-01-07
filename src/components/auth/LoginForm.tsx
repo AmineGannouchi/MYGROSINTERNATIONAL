@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 
-export default function LoginForm({ onToggle }: { onToggle: () => void }) {
+interface LoginFormProps {
+  onToggle: () => void;
+  onSuccess?: () => void;
+}
+
+export default function LoginForm({ onToggle, onSuccess }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -15,6 +20,7 @@ export default function LoginForm({ onToggle }: { onToggle: () => void }) {
 
     try {
       await signIn(email, password);
+      onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {
@@ -23,9 +29,7 @@ export default function LoginForm({ onToggle }: { onToggle: () => void }) {
   };
 
   return (
-    <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Connexion</h2>
-
+    <div className="w-full">
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded">
           {error}
