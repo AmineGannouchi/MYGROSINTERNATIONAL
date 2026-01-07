@@ -85,12 +85,15 @@ export default function NewHeader() {
 
           {(profile?.role === 'admin' || profile?.role === 'commercial') && (
             <>
+              <Link to="/admin" className={isActive('/admin') && location.pathname === '/admin' ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Dashboard</Link>
               <Link to="/admin/products" className={isActive('/admin/products') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Produits</Link>
               <Link to="/admin/orders" className={isActive('/admin/orders') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Commandes</Link>
-              <Link to="/admin/tracking" className={isActive('/admin/tracking') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Suivi Livraisons</Link>
-              <Link to="/admin/access-requests" className={isActive('/admin/access-requests') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Demandes Accès</Link>
-              <Link to="/admin/contact-inbox" className={isActive('/admin/contact-inbox') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Messages Contact</Link>
-              <Link to="/visits" className={isActive('/visits') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Visites</Link>
+              <Link to="/admin/tracking" className={isActive('/admin/tracking') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Suivi</Link>
+              <Link to="/admin/messages" className={isActive('/admin/messages') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Messages</Link>
+              <Link to="/admin/users-list" className={isActive('/admin/users-list') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Utilisateurs</Link>
+              <Link to="/admin/visits" className={isActive('/admin/visits') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Visites</Link>
+              <Link to="/admin/access-requests" className={isActive('/admin/access-requests') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Accès</Link>
+              <Link to="/admin/contact-inbox" className={isActive('/admin/contact-inbox') ? 'text-green-600 font-medium' : 'text-gray-700 hover:text-green-600'}>Contact</Link>
             </>
           )}
         </nav>
